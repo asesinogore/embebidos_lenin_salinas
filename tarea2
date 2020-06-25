@@ -19,7 +19,7 @@ pinMode(btn2,INPUT);
 void loop() {
   // put your main code here, to run repeatedly:
   //cuando el boton  1 se presiona  empieza a contar de 
- if(digitalRead(btn1)==HIGH){ if(i<=8){i=1-i;delay(300);
+ if(digitalRead(btn1)==HIGH){ i=0;if(i<=8){i=1-i;delay(300);
 digitalWrite(led1,!digitalRead(led1));
 digitalWrite(led1,!digitalRead(led2));
 
@@ -31,7 +31,7 @@ digitalWrite(led1,!digitalRead(led5));
 
 digitalWrite(led1,!digitalRead(led6));i++;}}
 
- if(digitalRead(btn2)==HIGH){  if(j<=10){j=1-j;delay(300);{
+ if(digitalRead(btn2)==HIGH){ j=0; if(j<=10){j=1-j;delay(300);{
 digitalWrite(led1,HIGH);
 digitalWrite(led6,HIGH);delay(1000);
   digitalWrite(led1,LOW);
