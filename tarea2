@@ -1,0 +1,54 @@
+const int led1 =8, led2=9,led3=10,led4=11,led5=12,led6=13, btn1=7, btn2=6; //declaracion de variables y pines a usar
+ int i=0,j=0,k=0;
+void setup() {
+  // put your setup code here, to run once:
+pinMode(led6, OUTPUT);//declarar modos de  entrada o salida en los pines
+
+pinMode(led5, OUTPUT);
+
+pinMode(led4, OUTPUT);
+pinMode(led3, OUTPUT);
+
+pinMode(led2, OUTPUT);
+
+pinMode(led1, OUTPUT);
+pinMode(btn1,INPUT);
+pinMode(btn2,INPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  //cuando el boton  1 se presiona  empieza a contar de 
+ if(digitalRead(btn1)==HIGH){ if(i<=8){i=1-i;delay(300);
+digitalWrite(led1,!digitalRead(led1));
+digitalWrite(led1,!digitalRead(led2));
+
+digitalWrite(led1,!digitalRead(led3));
+
+digitalWrite(led1,!digitalRead(led4));
+
+digitalWrite(led1,!digitalRead(led5));
+
+digitalWrite(led1,!digitalRead(led6));i++;}}
+
+ if(digitalRead(btn2)==HIGH){  if(j<=10){j=1-j;delay(300);{
+digitalWrite(led1,HIGH);
+digitalWrite(led6,HIGH);delay(1000);
+  digitalWrite(led1,LOW);
+digitalWrite(led6,LOW);delay(1000);
+  
+  
+  digitalWrite(led2,HIGH);
+digitalWrite(led5,HIGH);delay(1000);
+  digitalWrite(led2,LOW);
+digitalWrite(led5,LOW);delay(1000);
+
+  digitalWrite(led3,HIGH);
+digitalWrite(led4,HIGH);delay(1000);
+  digitalWrite(led3,LOW);
+digitalWrite(led4,LOW);delay(1000);
+j++;
+ }
+ 
+ 
+ }}}
