@@ -1,0 +1,17 @@
+const int led[]={13,12,11,10,9,8};//declaramos los pines a usar en forma de vector
+ int i=0,j=0,k=0;//declaramos variables para los contadores de los ciclos
+void setup() {
+  for(k=0;k<8;k++){pinMode(led[k],OUTPUT);}//inicializamos los pines en modo de salida como vector
+}
+
+void loop() {
+ for(i=0;i<256;i++){
+  for(j=0;j<8;j++){if (((i>>j)&1)==1){digitalWrite(led[j],HIGH);}else digitalWrite(led[j],LOW);}delay(300);
+  }
+  //el primer ciclo for cuenta los bits de salida totales
+  //el segundo ciclo for enciende los leds en forma binaria contando hasta 64 en 6 bits
+}
+//LENIN-SALINAS
+//UTN
+//FICA-CITEL
+//EMBEBIDOS
