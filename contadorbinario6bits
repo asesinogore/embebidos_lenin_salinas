@@ -1,4 +1,3 @@
-
 const int led[]={13,12,11,10,9,8},btn=6;//declaramos los pines a usar en forma de vector y el pin 6 para el uso del boton
  int i=0,j=0,k=0;//declaramos variables para los contadores de los ciclos
 void setup() {
@@ -8,14 +7,13 @@ void setup() {
 
 void loop() {
 int estadoBoton = digitalRead(6); //leemos el estado del boton para iniciar el conteo, si el estado del boton es presionado cuenta caso contrario no sigue el ciclo
-if(estadoBoton == 0){
+if(estadoBoton == 0&&i<256){
 
- for(i=0;i<256;i++){
-  for(j=0;j<8;j++){if (((i>>j)&1)==1){digitalWrite(led[j],HIGH);}else digitalWrite(led[j],LOW);}delay(100);
+   for(j=0;j<8;j++){if (((i>>j)&1)==1){digitalWrite(led[j],HIGH);}else digitalWrite(led[j],LOW);}delay(300);i++;if(i>256){i=0;}//el ciclo  cuenta cada vez que presionamos el boton
   }
   //el primer ciclo for cuenta los bits de salida totales
   //el segundo ciclo for enciende los leds en forma binaria contando hasta 64 en 6 bits
-}
+
 }
 //LENIN-SALINAS
 //UTN
