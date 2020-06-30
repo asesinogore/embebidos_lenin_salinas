@@ -1,0 +1,25 @@
+//LENIN SALINAS
+//UTN
+//FICA-CITEL
+//ING PAUL ROSERO
+//INVERTIR PALABRA EN ARDUINO Y MOSTRAR EN LCD
+
+#include  <LiquidCrystal.h>//incluimos la libreria para el uso del lcd 16x2
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);//se declara los pines de uso del display en el arduino
+String str = "ARDUINO";//creamos la cadena de la palabra ARDUINO
+String inver = "";//se crea la cadena para invertir vacia
+void setup(){  lcd.begin(16, 2);  lcd.home();}//se declara el tipo de display
+int i = 0,x=0;//se inicializa los contadores en 0
+void loop(){
+ lcd.setCursor ( 0, 1 );lcd.print(str);delay(500);//se muestra la cadena original en el display
+ lcd.setCursor ( 1, 0 );lcd.print(str.length()); delay(500);//se muestra el tamano de la cadena en el display 
+for (i; i < str.length(); i++) {lcd.clear();lcd.setCursor(i, 0);lcd.print(str.length());}//se muestra el tamano de la cadena en el lcd
+//se invierte la cadena y se muestra en la lcd
+for (x=str.length()-1;x>=0;x--){ inver = inver + str.charAt(x);lcd.clear();} lcd.setCursor ( 0, 1 );lcd.print(inver); delay(500);
+//se muestra en el display el tamano de la cadena invertida
+lcd.setCursor ( 1, 0 );lcd.print(inver.length()); delay(500);
+//se reinicia los contadores a 0 y la cadena invertida a vacio para evitar bucle de sobrescritura
+for (i; i < str.length(); i++) {lcd.clear();lcd.setCursor(i, 0);lcd.print(inver.length());}
+ if(x>str.length()){inver = "";x=0;i=0;lcd.clear();}
+  }
+ 
