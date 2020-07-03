@@ -3,3 +3,70 @@
 //FICA CITEL
 //DEBER 6
 //EMBEBIDOS
+
+////maestro
+
+#include <Wire.h>// se agrega la libreria wire
+#define direccion_PFC8574 0x38//se crea la coneccion
+
+Escribir(direccion_PFC8574, 0xff);
+//ciclo para enviar los datos para q se encienda los leds
+void Escribir(int direccion, byte dato) {
+Wire.beginTransmission(direccion);
+Wire.write(dato);
+Wire.endTransmission();
+delay(5);
+}
+
+byte Leer(int direccion) {
+byte LeeDato = 0xff;
+Wire.requestFrom(direccion,1);
+if(Wire.available()){
+LeeDato = Wire.read();
+return LeeDato;
+}
+
+
+
+//escalvo
+#include <Wire.h> /// se agrega la libreria wire
+#define direccion_PFC8574 0x38 //se crea la coneccion
+
+int LED2 = 2, LED3 = 3, LED4 = 4;//se inicia los pines de los leds
+
+void setup(){
+pinMode(LED2, OUTPUT);pinMode(LED3, OUTPUT);pinMode(LED4, OUTPUT);//declarar los leds como salida
+
+Wire.begin();Serial.begin(9600);//inicializar las conecciones de entrada y salida serial
+}
+
+void loop() {
+byte cual;
+cual = Leer(direccion_PFC8574);
+//ciclo para encender leds segun la coneccion
+if(bitRead(cual,0))
+digitalWrite(LED2, LOW);
+else
+digitalWrite(LED2, HIGH);
+
+if(bitRead(cual,1))
+digitalWrite(LED3, LOW);
+else
+digitalWrite(LED3, HIGH); 
+
+if(bitRead(cual,2))
+digitalWrite(LED4, LOW);
+else
+digitalWrite(LED4, HIGH);
+
+delay(100);
+}
+//nos muestra q led se enciende
+byte Leer(int direccion) {
+byte LeeDato = 0xff;
+Wire.requestFrom(direccion,1);
+if(Wire.available()){
+LeeDato = Wire.read();
+}
+return LeeDato;
+}
