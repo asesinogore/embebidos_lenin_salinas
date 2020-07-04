@@ -1,0 +1,67 @@
+//universidad tecnica del norte
+//fica citel
+//lenin salinas
+//lab coneccioni2c
+
+//usando dos arduinos mega 2560
+
+// Master
+# include <Wire.h>//inicializamos la libreria de coneccion i2c
+
+String mensaje = "", codigo = "", inver = "", temp="";
+ int i = 0,x=0;
+void setup() {
+  Wire.begin();  Serial.begin(9600);//inicializamos la coneccion serial en 9600
+ }
+
+void loop() {
+  if (Serial.available() > 0) {mensaje = Serial.readString(); Serial.println("");//se obtiene los datos del virtual termninal por serial 9600
+for (x=mensaje.length()-1;x>=0;x--){ inver = inver + mensaje.charAt(x)+x; delay(10);//se invierte el mensaje y se anade un numero despues de cada caracter
+ if(x>mensaje.length()){inver = "";x=0;i=0;} }//se inicializa valores para evitar errores de sobreconcatenamiento
+  
+ codigo=inver;//este sera codigo cifrado a enviar
+ //se envia el mensaje cifrado
+   Wire.beginTransmission(1);Wire.write(codigo.c_str());Wire.endTransmission();Serial.println("");delay(100);
+} 
+mensaje = ""; codigo = ""; inver = "";//se vuelve a vaciar los string para evitar errores de sobreconcatenamiento
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+// slave
+
+# include <Wire.h>//inicializamos la libreria de coneccion i2c
+# include <LiquidCrystal.h>//inicializamos la libresria de la lcd 16x2
+LiquidCrystal lcd = {13, 12, 11, 10, 9, 8};//declaramos los pines de uso para la lcd
+
+char data;String codigo = "", mensaje = "",elimina="",inver = "";
+int k=0,i = 0,x=0;
+void setup() {
+  lcd.begin(16, 2);
+  Wire.begin(1);
+  Wire.onReceive(recieveEvent);  Serial.begin(9600); //inicializamos la coneccion serial en 9600
+}
+
+void loop() { }
+//creamos el evento de recepcion de datos
+void recieveEvent(int bytes) {
+  codigo = "";
+  lcd.clear();//limpiamos la lcd
+  //se muestran en serial los datos recibidos
+  while (Wire.available()) {data = Wire.read(); codigo.concat(data);Serial.println(codigo);}
+  for (x=mensaje.length()-1;x>=0;x--){ inver = inver + mensaje.charAt(x)+x; delay(10);Serial.println(inver);  
+//se reinicia los contadores a 0 y la cadena invertida a vacio para evitar bucle de sobrescritura
+ if(x>mensaje.length()){inver = "";x=0;i=0;} }
+  for (k=codigo.length()-1;k>=0;k--){ k--;elimina = elimina + codigo.charAt(k);Serial.println(elimina);   delay(10);}//se invierte la cadena para descifrar el mensaje
+    mensaje=elimina;   //el mensaje a mostrar en la lcd sera el desciufrado
+
+ //se muestra en la lcd el mensaje decifrado recibido
+  lcd.setCursor(0, 0);  lcd.print("cif:");  lcd.setCursor(6, 0);  lcd.print(codigo);
+
+  
+ //se muestra en la lcd el mensaje  descifrado
+  lcd.setCursor(0, 1);  lcd.print("msg:");  lcd.setCursor(4, 1);  lcd.print(mensaje);
+  codigo = ""; mensaje = ""; elimina=""; inver = "";//inicializamos las variables a vacio para evitar errores de sobreconcatenamiento
+  
+
+  
+  
+}
