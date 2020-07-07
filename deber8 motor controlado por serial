@@ -1,0 +1,32 @@
+//deber 8
+//UTN 
+//FICA CITEL
+//SALINAS LENIN
+//SISTEMAS EMBEBIDOS
+
+#include <LiquidCrystal.h>
+LiquidCrystal lcd (13,12,11,10,9,8); //se declara los pines de la lcd
+int conversor, vel, dutty;//declaramos variables de velocidad de valor
+float voltaje,volt;//creamos valores flotantes de apoyo
+const int motor=6;// declaracion pin de salida motor
+String dato;// varible para obtener dato desde el serial
+
+void setup() {
+  lcd.begin(16,2);Serial.begin(9600);//iniciamos la conewccion serial y la lcd 16*2
+   Serial.println("Bienvenido");//presentamos un mensaje de bienvenida
+  Serial.println("Ingresar un valor entre 0 a 255 ");//damos un mensaje para ingresar datos
+}
+void loop() {
+  conversor=analogRead(0);//obtenesmo los datos del virtual terminal
+  if(Serial.available()>0){
+    dato=Serial.readString();//leemos el dato ingresado
+    vel=dato.toInt(); //convertimos en entero el valor obtenido 
+    if(vel <=255){conversor=map(conversor,0,1023,0,vel);analogWrite (motor,vel);//realizamos la comprobacion de que sea un numero entero menor a 255
+      lcd.setCursor(0,0);lcd.print("Vel:");lcd.setCursor(0,1);lcd.print(vel);delay(2000);lcd.clear();}//muestra la velocidad en la lcd 16*2
+    else{Serial.println ("ingresar  valor entre 0 a 255 ");lcd.setCursor(0,0);lcd.print("System fail");lcd.setCursor(0,1);lcd.print("Solo 0 a 255 ");delay(6000);lcd.clear();}//muestra la velocidad en la lcd 16*2
+  }
+  volt=(conversor*5.0)/1023.0;dutty=conversor/4;//realizamos la convercion para velocidad y pwm 
+  analogWrite(motor,dutty);//damos el giro al motor
+  lcd.setCursor(0,0);lcd.print("vel :");lcd.setCursor(0,1);lcd.print(dutty);//muestra la velocidad en la lcd 16*2
+  delay(2000);lcd.clear();
+}
