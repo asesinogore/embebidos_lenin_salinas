@@ -1,1 +1,67 @@
 
+//UTN FICA CITEL
+//SALINAS LENIN
+//sumaA estaTA MEDIANTE SERIAL 9600
+//ARDUINO MEGA
+
+int on=0, conta=0, i,j=0,as,n1,n2,suma,esta; 
+ String dato,num1,num2;
+void setup() {
+
+  Serial.begin(9600);
+ 
+  attachInterrupt(0,act,LOW);  attachInterrupt(1,operaciones,LOW);
+  }
+
+void loop() {
+  if(on==1){if(Serial.available()){dato=Serial.readString();}
+  }
+  if(on==2){as=dato.indexOf('/');int t = dato.length();for(j=0;j<as;j++){ num1=num1+String(dato[j]);}
+    n1=num1.toInt();num1="";
+    for(j=as+1;j<t;j++){
+      num2=num2+String(dato[j]);
+    }
+    //Serial.println(n2);
+    n2=num2.toInt();
+    num2="";
+  }
+}
+
+void act(){
+  switch (on){
+    case 0:
+      Serial.println("Ingestae datos separados por /");
+      on++;
+    break;
+    case 1:
+      Serial.println("");
+      Serial.println("button 1 sumaa/ button 2 estata");
+      on++;
+    break;
+    case 2:
+      Serial.println("Gracias por usar este sistema");
+      conta=0;
+      on=0;
+      i=0;
+    break;
+  }
+}
+
+void operaciones(){
+  switch (conta){
+    case 0:
+       suma=n1+n2;
+//       Serial.println(n1);
+//       Serial.println(n2);
+       Serial.println("sumaa= "+String(suma));
+       suma=0;
+       conta++;
+    break;
+    case 1:
+       esta=n1-n2;
+       Serial.println("resta= "+String(esta));
+       esta=0;
+       conta=0;
+    break;
+  }
+}
