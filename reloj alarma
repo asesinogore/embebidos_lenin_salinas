@@ -1,1 +1,41 @@
 
+//utn fica citel
+//salinas lenin
+//reloj alarma
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8); //Configuramos los pines 12=RS 11=E 5,4,3,2=pines de control
+int pulsador1=6;          //Cargamos un 6 ena la variable "pulsador1"
+int pulsador2=7;          //Cargamos un 7 en la variable "pulsador2"
+int h, m, s,ma,ha;
+
+
+void setup (){
+  pinMode(pulsador1,INPUT);  //El pulsador 1 en el pin 6 es un pin de entrada
+  pinMode(pulsador2,INPUT);  //El pulsador 2 en el pin 7 es un pin de entrada
+  lcd.begin(16, 2);          //Configuramos los números de filas y de columnas del LCD
+  lcd.clear();
+ 
+}
+void loop(){    //Programa principal
+//ciclo de reloj
+s++;if(s==59){m++;s=0;}if(m==59){h++;m=0;}if(h==23){h=0;m=0;s=0;}//ciclo reloj
+
+if(h==ha&&m==ma){lcd.setCursor ( 1, 0 );lcd.print("ALARMA ACTIVADA");delay(10);}//muestra la ahora de alarma en el diplayy}
+//muestra en el display alarma y hora
+lcd.setCursor ( 1, 0 );lcd.print("Alarma:");lcd.print(ha);lcd.print(":");lcd.print(ma);delay(10);//muestra la ahora de alarma en el diplayy
+ lcd.setCursor ( 0, 1 );lcd.print("Hora:");lcd.print(h);lcd.print(":");lcd.print(m); lcd.print(":");lcd.print(s);delay(10);//muestra la ahora de alarma en el diplayy
+  delay(1000);
+}
+  
+
+  
+  void alarma(){    //Rutina para poner el reloj en hora
+  if(digitalRead(pulsador2)==LOW){    //Si el presionas el pulsador2
+   ma++;                       //Incrementa el minunto de la alarma en 1
+   delay (250);                        //Pausa antirebote
+  }
+  if(digitalRead(pulsador1)==LOW){    //Si el presionas el pulsador1
+  h++;                       //Incrementa la hora de la alarma en 1
+   delay(250);                         //Pausa antirebote
+  }
+}
