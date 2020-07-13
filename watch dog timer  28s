@@ -1,0 +1,40 @@
+// LENIN SALINAS
+//UTN FICA CITEL
+//EMBEBIDOS
+//SISTEMA WATCHDOG TIMER QUE REINICIA CADA 28S Y NOS MUESTRA EN EL DISPLAY QUE LED ETA ENCENDIDO Y QUE LED ESTA APAGDO
+
+#include<avr/wdt.h>  // librería wdt
+#include<EEPROM.h>   // librería EEPROM
+#include  <LiquidCrystal.h>//invcluimos la libreria para el uso del lcd 16x2
+int i;               // Variable de conteo en programa principal
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8);
+const int led1=7,led2=6;
+void setup(){
+  pinMode(led1,OUTPUT);  pinMode(led2,OUTPUT);
+  lcd.begin(16, 2);  lcd.home();
+  Serial.begin(9600);  // inicio de cx serial
+   digitalWrite(led1,HIGH);digitalWrite(led2,LOW);
+      lcd.setCursor ( 1, 0 ); lcd.print("LUZ VERDE:ON");
+    lcd.setCursor ( 0, 1 ); lcd.print("LUZ AZUL:OFF");
+    delay(500);digitalWrite(led1,LOW);digitalWrite(led2,HIGH);
+  Serial.println("Sistema Reset"); delay(500);  // mensaje desde setup
+  lcd.setCursor ( 1, 0 ); lcd.print("LUZ VERDE:OFF");
+    lcd.setCursor ( 0, 1 ); lcd.print("LUZ AZUL:ON   ");delay(500);
+  attachInterrupt(0,activacion,LOW); // interrupción lcd.clear(); 
+  
+  i=EEPROM.read(0);  // lectura de dato desde EEPROM
+}
+void loop(){
+  Serial.println(i++); // aumento de valor en variable
+  if(i<255){ // condición máxima de incremento
+        EEPROM.write(0,i); // almacenamiento en EEPROM
+    }
+   else 
+    i=0; // reinicia variable 
+  delay(300); // espera de 300 ms
+  
+}
+void activacion(){
+    wdt_disable(); // deshabilita el wdt
+    wdt_enable(WDTO_4S); // reiniciar en 4 segundos
+}
