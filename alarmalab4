@@ -1,0 +1,109 @@
+//UTN FICA CITEL
+//LENIN STALIN SALINAS LEON
+//SISTEMAS EMBEBIDOS
+//ING PAUL ROSERO & ING ALEJANDRA PINTO
+//SISTEMA DE ALARMA QUE PIDE UNA CLAVE PARA ACTIVAR CON RETRASO DE SALIDA DE 20 S
+//TIENE 3 SENSORES QUE SI SE ACTIVAN SE DETIENE EL FUNCIONAMIENTO DEL SISTEMA
+
+#include <MsTimer2.h>//libreria del timer
+#include <LiquidCrystal.h>//libreria de la lcd 16x2
+#include <avr/power.h>//librerias del watch dog 
+#include <avr/sleep.h>
+#include <EEPROM.h>  //libreria apra usar la eproom
+#include <avr/wdt.h>
+int on=0,i,h,j, tiempo=0,r,k,kc,hr=0,mm=0,mr,ct,cont=0;//variables de conteo y ciclos /reloj/tiempo de retraso de salida/variables apra comprobar estados
+const int leds[3] = {4,5,6};long randLed,randLed2;//pindes de salida de los leds y ciclos random
+const int s1=19,s2=20,s3=21,s4=7;//pindes de sensores y botones
+int val = 0,val1 = 0,val2 = 0,vr=0, state = 0,svr=0,old_val = 0,old_vr=0;//variables para comprobar el estado de los sensores
+LiquidCrystal lcd (13,12,11,10,9,8);//pindes de uso de la lcd 16x2
+int act=0;
+String dato,clave="asdf";//clave almcenada cono valor de fabrica
+
+void setup() {
+
+   wdt_disable();
+   //ciclo de encendido de los leds en forma random
+for(i=0;i<3;i++){pinMode(leds[i],OUTPUT);}Serial.begin(9600);lcd.begin(16,2);MsTimer2::set(1000,reloj);
+  //interrupciones de activacion y configuracion para activar la alarma
+  attachInterrupt(0,activacion,LOW);  attachInterrupt(1,configuracion,LOW);  
+  //pindes de entrada de sensores y botones de reset
+  pinMode(s1,INPUT);  pinMode(s2,INPUT);  pinMode(s3,INPUT); pinMode(s4,INPUT);
+   //mensaje de bienvenida del sistema
+  Serial.println("Alarma SALTECH");  Serial.println("ingrese clave y presione enter");
+  power_adc_disable();lcd.setCursor(1,0);lcd.print("ALARMA SALTECH");lcd.setCursor(0,1);lcd.print("SISTEMA OFFLINE");
+
+}
+void loop() {
+  val= digitalRead(s1); // lee el estado del Boton
+// chequear si el boton esta presionado o no
+val1= digitalRead(s2);
+val2= digitalRead(s3);
+vr=digitalRead(s4);
+//comprobacion de sensores simulados si se activan se detiene el sistema
+if ((val == HIGH) && (old_val == LOW)){state=1-state;    if(state==1){k=0;dato="";  hr= EEPROM.read(0);    mm= EEPROM.read(1);lcd.setCursor(1,0);lcd.print("SENSOR 1 ACT               ");lcd.setCursor(0,1);lcd.print(String(hr)+":"+String(mm));}}
+if ((val1 == HIGH) && (old_val == LOW)){state=1-state;    if(state==1){k=0;dato="";   hr= EEPROM.read(0);    mm= EEPROM.read(1);lcd.setCursor(1,0);lcd.print("SENSOR 2 ACT             ");lcd.setCursor(0,1);lcd.print(String(hr)+":"+String(mm));}}
+if ((val2 == HIGH) && (old_val == LOW)){state=1-state;    if(state==1){k=0;dato="";   hr= EEPROM.read(0);    mm= EEPROM.read(1);lcd.setCursor(1,0);lcd.print("SENSOR 3 ACT              ");lcd.setCursor(0,1);lcd.print(String(hr)+":"+String(mm));}}
+//logic state que simula un corte de energia
+if ((vr == HIGH) && (old_vr == LOW)){svr=1-svr;    if(svr==1){ MsTimer2::stop();
+tiempo=0,r,k,kc,hr=0,mm=0,mr,ct;
+val = 0,val1 = 0,val2 = 0,vr=0, state = 0,svr=0,old_val = 0,old_vr=0, on=0;
+//se lee los respaldsos en la emprom en las posiciones 0 y 1
+//muestra la hora de respaldo por serial
+hr= EEPROM.read(0);    mm= EEPROM.read(1); }}
+  if(on==1){if(Serial.available()){dato=Serial.readString();}Serial.println(analogRead(0));  delay(1000);
+ 
+}
+//ciclo q comprueba cada 55 min si el sistema esta correcto y respalda la hora 
+ if(k==1){mm++;ct++;
+   if(ct==55){EEPROM.write(0,hr);EEPROM.write(1,mm);ct=0;lcd.setCursor(1,0);   lcd.print("SISTEMA OK               "); Serial.println("respaldo a las:  "+String(hr)+":"+String(mm)+"      "); }
+  if(mm==60){hr++;mm=0;}if(hr==24){hr=0;mm=0;mr=0;}delay(100);//delay de retraso del reloj
+  //indica que el sistema esta activo con la hora 
+ lcd.setCursor(1,0);   lcd.print("SISTEMA ONLINE");lcd.setCursor(0,1);   lcd.print(String(hr)+" : "+String(mm)+"               ");  
+ //ciclo que enciende los leds en forma random cada segundo(min por simulacion)
+ kc++;randLed= random(0,3);randLed2 = random (0,3);digitalWrite(leds[randLed], HIGH);digitalWrite(leds[randLed2], LOW);   
+     
+  if(h<25){for(j=0;j<h;j++){for(i=0;i<4;i++){digitalWrite(leds[i], LOW);}}
+    
+  }
+ //Serial.println(String(cont));
+}
+}
+void activacion(){
+  //caso 1 confirma la clave ingresada para activar el sistema
+  switch(on){
+    case 0:
+    Serial.println("confirme activacion");tiempo=20;
+     on++;
+      break;
+    //caso 2 pide confirmacion para activar el sistema
+    case 1:
+    Serial.println(String("Activasion en: ")+String(tiempo)+String("seg"));MsTimer2::start();on++;
+   
+    break;
+    //caso 3 si la clave es incorrecta pide ingresar de nuevo
+        case 2:
+    Serial.println("vuelva a ingresar la clave");tiempo=0;on=0;MsTimer2::stop();power_adc_disable(); on++;k=0;
+    break;
+   
+  }
+}
+//ciclo de comprobacion de la clave ingresada
+//obtiene un dato por string y comprueba si es igual a la clave almacenada en el programa
+void configuracion(){
+  //se obtiene la clave por serial, si es correcta activa el ciclo de salida
+  if(on==1){if(dato==clave){Serial.println(String("desea activar"));
+    if(tiempo<21){Serial.println(String("Activacion en: ")+String(tiempo)+String("seg"));}
+    else    tiempo=0;cont=0;  }
+  //si la clave ingresada esta mal pide que se ingrese nuevamente
+  else{Serial.println("CLAVE ERRONEA, ingrese nuevamente");on=0;wdt_enable(WDTO_2S);wdt_reset();dato="";  }}
+}
+//ciclo del temporisador para activar el sistema //retraso de salida
+void reloj(){
+  cont++;r=tiempo-cont;
+  Serial.println(String("Tiempo de salida: ")+String(tiempo-cont));lcd.setCursor(1,0);lcd.print("Activado en:"+String(r)+"   ");lcd.setCursor(1,13);
+   // detiene el ciclo de conteo al llegar a 0 y activa los sensores
+   if(cont==tiempo){power_adc_enable();delay(10);Serial.println(analogRead(0));cont=0;tiempo=0;on=0;dato=""; 
+   MsTimer2::stop();k=1;lcd.setCursor(1,0);lcd.print("ALARMA SALTECH");lcd.setCursor(0,1);lcd.print("SISTEMA ONLINE   ");
+    power_adc_disable();
+  }
+  }
