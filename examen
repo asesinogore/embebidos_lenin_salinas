@@ -1,0 +1,86 @@
+//UTN FICA CITEL
+//SISTEMAS EMBEBIDOS
+//LENIN SALINAS
+
+#include "datos.h"
+#include "test.h"
+int et1, et2,et3,et4, fil,col,fila=0,c1=1,c0,cont,divi,ca;
+float matrizprom[4][3],matrizdis[157][1],matrizdiv[157][1],m1,m2,m3,m4,matrizfinal[48][1],matrizn[52][4];
+float distancia,distanciam=20000,etiqueta;
+void setup() {
+Serial.begin(9600);Serial.println("%%%%%%%%%%%%%%muestras por etiqueta%%%%%%%%%%%%%");
+
+for(int i =0; i < 158; i++){
+if(matriz[i][3]==1){matrizprom[0][0]=matrizprom[0][0]+matriz[i][0];matrizprom[0][1]=matrizprom[0][1]+matriz[i][1];matrizprom[0][2]=matrizprom[0][2]+matriz[i][2];et1++;}
+else{if(matriz[i][3]==2){matrizprom[1][0]=matrizprom[1][0]+matriz[i][0];matrizprom[1][1]=matrizprom[1][1]+matriz[i][1];matrizprom[1][2]=matrizprom[1][2]+matriz[i][2];et2++;}
+else{if(matriz[i][3]==3){matrizprom[2][0]=matrizprom[2][0]+matriz[i][0];matrizprom[2][1]=matrizprom[2][1]+matriz[i][1];matrizprom[2][2]=matrizprom[2][2]+matriz[i][2];et3++;}
+else{if(matriz[i][3]==4){matrizprom[3][0]=matrizprom[3][0]+matriz[i][0];matrizprom[3][1]=matrizprom[3][1]+matriz[i][1];matrizprom[3][2]=matrizprom[3][2]+matriz[i][2];et4++;}}}}}
+Serial.println("hay   "+String(et1)+"  muestras en la etiqueta 1");Serial.println("hay   "+String(et2)+"  muestras en la etiqueta 2");
+Serial.println("hay   "+String(et3)+"  muestras en la etiqueta 3");Serial.println("hay   "+String(et4)+"  muestras en la etiqueta 4");
+
+ Serial.println("%%%%%%%%%%%%%%promedio por etiqueta%%%%%%%%%%%%%");
+for(int j=0;j<3;j++){matrizprom[0][j]=matrizprom[0][j]/et1;}
+for(int j=0;j<3;j++){matrizprom[1][j]=matrizprom[1][j]/et2;}
+for(int j=0;j<3;j++){matrizprom[2][j]=matrizprom[2][j]/et3;}
+for(int j=0;j<3;j++){matrizprom[3][j]=matrizprom[3][j]/et4;}
+
+
+for(int f=0;f<4;f++){for(int cx=0;cx<3;cx++){Serial.println("et "+String(f+1)+"  col "+String(cx+1)+" :  "+String(matrizprom[f][cx]));}}
+  
+Serial.println("%%%%%%%%%%%%%%calculo de distancias%%%%%%%%%%%%%");
+for(int fila=0;fila<40;fila++){matrizdis[fila][0]=sqrt(pow(matriz[fila][0]-matrizprom[col][0],2)+pow(matriz[fila][1]-matrizprom[col][1],2)+pow(matriz[fila][2]-matrizprom[col][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizdis[fila][0]));}
+
+for(int fila=40;fila<79;fila++){matrizdis[fila][0]=sqrt(pow(matriz[fila][0]-matrizprom[1][0],2)+pow(matriz[fila][1]-matrizprom[1][1],2)+pow(matriz[fila][2]-matrizprom[1][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizdis[fila][0]));}
+for(int fila=79;fila<118;fila++){matrizdis[fila][0]=sqrt(pow(matriz[fila][0]-matrizprom[2][0],2)+pow(matriz[fila][1]-matrizprom[2][1],2)+pow(matriz[fila][2]-matrizprom[2][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizdis[fila][0]));}
+for(int fila=118;fila<157;fila++){matrizdis[fila][0]=sqrt(pow(matriz[fila][0]-matrizprom[3][0],2)+pow(matriz[fila][1]-matrizprom[3][1],2)+pow(matriz[fila][2]-matrizprom[3][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizdis[fila][0]));}
+
+Serial.println("%%%%%%%%%%%%%%%%busqueda de la distancia mayor en cada et%%%%%%%%%%%%%%%%");   
+for(fila=0;fila<40;fila++){if(m1<matrizdis[fila][0]){m1=matrizdis[fila][0];}}
+for(fila=39;fila<79;fila++){if(m2<matrizdis[fila][0]){m2=matrizdis[fila][0];}}
+for(fila=79;fila<118;fila++){if(m3<matrizdis[fila][0]){m3=matrizdis[fila][0];}}
+for(fila=118;fila<158;fila++){if(m4<matrizdis[fila][0]){m4=matrizdis[fila][0];}}
+
+
+Serial.println("distancia mayor et 1 "+String(m1));Serial.println("distancia mayor et 2 "+String(m2));
+Serial.println("distancia mayor et 3 "+String(m3));Serial.println("distancia mayor et 4 "+String(m4));
+
+Serial.println("%%%%%%%%%%%%%%%%division de cada valor para la distancia mayor por et%%%%%%%%%%%%%%%%");   
+for(fila=0;fila<40;fila++){matrizdiv[fila][0]=matrizdis[fila][0]/m1;}
+for(fila=40;fila<79;fila++){matrizdiv[fila][0]=matrizdis[fila][0]/m2;}
+for(fila=79;fila<118;fila++){matrizdiv[fila][0]=matrizdis[fila][0]/m3;}
+for(fila=118;fila<158;fila++){matrizdiv[fila][0]=matrizdis[fila][0]/m4;}
+for(fila=0;fila<157;fila++){Serial.println("division distancias  "+String(fila+1)+":   "+String(matrizdiv[fila][0]));}
+   
+for(fila=0;fila<158;fila++){
+  if(matrizdiv[fila][0]>0.4&&matrizdiv[fila][0]<0.65){
+  c1++;matrizfinal[c1][0]=matrizdiv[fila][0];matrizn[cont][0]=matriz[fila][0];matrizn[cont][1]=matriz[fila][1];matrizn[cont][2]=matriz[fila][2];matrizn[cont][3]=matriz[fila][3];cont++;}
+                            else{c0++;} }
+                            
+Serial.println("valores true=   "+String(cont));
+for(fil=48;fil<52;fil++){for(int c=0;c<4;c++){matrizn[fil][c]=matrizprom[fil-48][c];matrizn[fil][c]=matrizprom[fil-48][c];matrizn[fil][c]=matrizprom[fil-48][c];matrizn[fil][3]=fil-47;}}
+
+Serial.println("%%%%%%%%%%%%%%cant. de datos para KNN%%%%%%%%%%%%%");
+Serial.println("valores true=   "+String(c1-1)+"    valores false=   "+String(c0));
+
+Serial.println("%%%%%%%%%%%%%%datos que se pueden usar para knn%%%%%%%%%%%%%");
+for(fil=0;fil<52;fil++){Serial.println(String(matrizn[fil][0])+String("   ")+String(matrizn[fil][1])+String("   ")+String(matrizn[fil][2])+String("   ")+String(matrizn[fil][3]));}
+
+Serial.println("%%%%%%%%%%%%%%matriz de prueba%%%%%%%%%%%%%");
+for(fil=0;fil<8;fil++){Serial.println(String(test[fil][0])+String("   ")+String(test[fil][1])+String("   ")+String(test[fil][2])+String("   ")+String(test[fil][3]));}
+
+Serial.println("%%%%%%%%%%%%%% calculo knn %%%%%%%%%%%%%");
+for(fil=0;fila<52;fila++){matrizn[fila][0]=sqrt(pow(matrizn[fila][0]-test[0][0],2)+pow(matrizn[fila][1]-test[0][1],2)+pow(matrizn[fila][2]-test[0][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizn[fila][0]));}
+for(fil=0;fila<52;fila++){matrizn[fila][1]=sqrt(pow(matrizn[fila][1]-test[1][0],2)+pow(matrizn[fila][1]-test[1][1],2)+pow(matrizn[fila][2]-test[1][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizn[fila][0]));}
+for(fil=0;fila<52;fila++){matrizn[fila][2]=sqrt(pow(matrizn[fila][2]-test[2][0],2)+pow(matrizn[fila][1]-test[2][1],2)+pow(matrizn[fila][2]-test[2][2],2));
+Serial.println("distancia  "+String(fila+1)+"  =  " +String(matrizn[fila][0]));}
+
+
+Serial.println(String("Datos acertados ")+String(ca*52/100)+String("  acertado")+String(matrizn[fila][0]);}
+
+void loop() {}
